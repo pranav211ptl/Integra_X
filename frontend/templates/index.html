@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IntegraX - Multi-Department Interoperability Gateway</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-lg bg-indigo-600 flex items-center justify-center font-black text-white text-base shadow-sm">IX</div>
+        <div>
+          <h1 class="font-bold text-base tracking-tight text-slate-900">IntegraX <span class="text-xs px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 ml-1 font-semibold">Federated Middleware Hub</span></h1>
+          <p class="text-[11px] text-slate-500">Government Interoperability & Federated Service Delivery</p>
+        </div>
+      </div>
+      
+      <!-- Top Navigation Switcher -->
+      <div class="flex items-center gap-3">
+        <button onclick="switchView('app')" id="btn-view-app" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200">Gateway Portals</button>
+        <button onclick="switchView('mesh')" id="btn-view-mesh" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100">Live Architecture & Mesh</button>
+
+        <div id="nav-user-info" class="hidden flex items-center gap-3 pl-3 border-l border-slate-200">
+          <div class="text-right">
+            <p id="user-display-name" class="text-xs font-bold text-slate-800">User</p>
+            <p id="user-display-dept" class="text-[10px] text-indigo-600 font-mono font-semibold uppercase">Department</p>
+          </div>
+          <button onclick="logout()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1.5 rounded-lg border border-slate-300 transition">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto p-6">
+    
+    <!-- VIEW A: LIVE ARCHITECTURE & API MESH VIEW -->
+    <div id="view-mesh-section" class="space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+        <div>
+          <span class="text-xs font-mono font-bold text-indigo-600 uppercase tracking-wider">Engineering Topology</span>
+          <h2 class="text-xl font-extrabold text-slate-900 mt-1">IntegraX Federated Topology & Circuit Breaker Mesh</h2>
+          <p class="text-xs text-slate-500 mt-1">Visual representation of real-time protocol transformation (SOAP/XML &rarr; GovSchema JSON) and asynchronous fallback queues.</p>
+        </div>
+
+        <!-- Circuit Breaker Toggle -->
+        <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200 flex items-center gap-3">
+          <div>
+            <p class="text-xs font-bold text-amber-900">Simulate Silo Outage:</p>
+            <p class="text-[10px] text-amber-700">Trip Revenue registry circuit breaker</p>
+          </div>
+          <button onclick="toggleRevenueOutage()" id="btn-outage-toggle" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition">
+            Offline Mode: OFF
+          </button>
+        </div>
+      </div>
+
+      <!-- Node Graph Diagram with Connected Flow Arrows -->
+      <div class="bg-slate-950 p-8 rounded-2xl border border-slate-800 text-white space-y-8 shadow-xl">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center items-stretch">
+          
+          <!-- Node 1: Ingress -->
+          <div class="bg-slate-900 p-5 rounded-xl border border-indigo-800/60 space-y-2 flex flex-col justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-indigo-950 text-indigo-400 border border-indigo-700">Client Layer</span>
+              <h4 class="font-bold text-sm text-white mt-2">Citizen Portal & SSO</h4>
+              <p class="text-[11px] text-slate-400 mt-1">Scoped JWT E-Consent generation with DPDP compliance.</p>
+            </div>
+            <div class="text-xs text-indigo-400 font-mono font-bold pt-2">&rarr; Auth Token Verified</div>
+          </div>
+
+          <!-- Node 2: Core Middleware -->
+          <div class="bg-slate-900 p-5 rounded-xl border border-cyan-800/60 space-y-2 flex flex-col justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-400 border border-cyan-700">IntegraX Gateway</span>
+              <h4 class="font-bold text-sm text-white mt-2">Normalizer & Mesh</h4>
+              <p class="text-[11px] text-slate-400 mt-1">Schema mapper (GovSchema v1.0), duplicate checks & token routing.</p>
+            </div>
+            <div class="text-xs text-cyan-400 font-mono font-bold pt-2">&rarr; Dispatched to Adapters</div>
+          </div>
+
+          <!-- Node 3: Disparate Adapters -->
+          <div class="bg-slate-900 p-5 rounded-xl border border-emerald-800/60 space-y-2 flex flex-col justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-700">Protocol Adapters</span>
+              <h4 class="font-bold text-sm text-white mt-2">Disparate Silo Connectors</h4>
+              <p class="text-[11px] text-slate-400 mt-1">SOAP/XML parser for Identity + SQL query adapter for Revenue.</p>
+            </div>
+            <div class="text-xs text-emerald-400 font-mono font-bold pt-2">&rarr; Auto-Normalized Record</div>
+          </div>
+
+          <!-- Node 4: Circuit Breaker & Queue -->
+          <div class="bg-slate-900 p-5 rounded-xl border border-amber-800/60 space-y-2 flex flex-col justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-950 text-amber-400 border border-amber-700">Fault Tolerance</span>
+              <h4 class="font-bold text-sm text-white mt-2">Async Retry Queue</h4>
+              <p class="text-[11px] text-slate-400 mt-1">Automatic fallback routing with SLA buffer for offline silos.</p>
+            </div>
+            <div class="text-xs text-amber-400 font-mono font-bold pt-2">&rarr; Immutable Audit Log</div>
+          </div>
+
+        </div>
+
+        <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
+          <h4 class="text-xs font-bold text-slate-300 uppercase mb-2">Live Asynchronous Retry Queue (Fault Recovery Ledger):</h4>
+          <div id="mesh-retry-queue-table" class="text-xs text-slate-400 font-mono">
+            Loading active fallback items...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW B: APPLICATION PORTALS -->
+    <div id="view-app-section" class="hidden space-y-6">
+      
+      <!-- 1. LOGIN SCREEN -->
+      <div id="section-login" class="max-w-md mx-auto mt-10 bg-white p-8 rounded-2xl border border-slate-200 shadow-xl">
+        <div class="text-center mb-6">
+          <h2 class="text-xl font-extrabold text-slate-900">IntegraX SSO Gateway</h2>
+          <p class="text-xs text-slate-500 mt-1">Select login profile to test multi-agency approval</p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl mb-5 border border-slate-200">
+          <button type="button" onclick="setLoginRole('citizen', 'citizen@gov.in')" id="btn-role-citizen" class="py-1.5 text-[11px] font-bold rounded-lg bg-indigo-600 text-white shadow-sm">Citizen</button>
+          <button type="button" onclick="setLoginRole('officer', 'revenue_officer@gov.in')" id="btn-role-revenue" class="py-1.5 text-[11px] font-semibold rounded-lg text-slate-600 hover:text-slate-900">Revenue Desk</button>
+          <button type="button" onclick="setLoginRole('officer', 'welfare_officer@gov.in')" id="btn-role-welfare" class="py-1.5 text-[11px] font-semibold rounded-lg text-slate-600 hover:text-slate-900">Welfare Desk</button>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">SSO Identifier</label>
+            <input id="login-username" type="text" value="citizen@gov.in" class="w-full mt-1 bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" />
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Password</label>
+            <input id="login-password" type="password" value="password123" class="w-full mt-1 bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <button onclick="handleLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow-md transition text-sm">
+            Access Gateway &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. CITIZEN VIEW: SUBMISSION + TRACKING -->
+      <div id="section-citizen" class="hidden space-y-6 max-w-5xl mx-auto">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+          <div>
+            <span class="text-xs font-mono font-bold text-indigo-600 tracking-wider uppercase">Citizen Single-Window Hub</span>
+            <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Direct Benefit Transfer & Welfare Portal</h2>
+            <p class="text-xs text-slate-500 mt-1">Multi-agency coordination with DPDP-compliant cryptographic e-consent.</p>
+          </div>
+          <div class="text-right bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <p class="text-[10px] uppercase text-slate-400 font-bold">Federated Citizen</p>
+            <p class="text-sm font-bold text-slate-900 font-mono">Aarav Sharma</p>
+            <p class="text-xs text-indigo-600 font-mono font-semibold">UID: IND-98765</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Submission Form -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <h3 class="font-bold text-sm text-slate-900 border-b border-slate-100 pb-2">Apply for Scheme</h3>
+            
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 uppercase">Target Scheme</label>
+              <select id="app-scheme" class="w-full mt-1 bg-white border border-slate-300 rounded-lg p-2.5 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="Higher Education Subsidy 2026">Higher Education Subsidy 2026</option>
+                <option value="Agriculture Equipment Subsidy">Agriculture Equipment Subsidy</option>
+                <option value="Urban Housing Assistance">Urban Housing Assistance</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 uppercase">Category</label>
+              <select id="app-category" class="w-full mt-1 bg-white border border-slate-300 rounded-lg p-2.5 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="General / Merit">General / Merit</option>
+                <option value="EWS - Economically Weaker">EWS - Economically Weaker</option>
+                <option value="Rural Beneficiary">Rural Beneficiary</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 uppercase">DBT Bank Account</label>
+              <input id="app-bank" type="text" value="SBIN0004521 - 38920194821" class="w-full mt-1 bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-900 font-mono outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+
+            <div class="p-3.5 bg-indigo-50 rounded-xl border border-indigo-100 text-xs">
+              <p class="font-bold text-indigo-900">E-Consent Scope (DPDP Act):</p>
+              <p class="text-[11px] text-indigo-700 mt-1">Queries <strong>Dept. of Identity (SOAP)</strong> & <strong>Dept. of Revenue (SQL)</strong> without file uploads.</p>
+            </div>
+
+            <button onclick="applyCitizenService()" id="btn-citizen-apply" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow transition text-xs">
+              Authorize Consent & Submit
+            </button>
+          </div>
+
+          <!-- Normalization Snapshot -->
+          <div class="md:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+              <h3 class="font-bold text-sm text-slate-900">Federated Auto-Fetch Snapshot</h3>
+              <span id="pipeline-status-badge" class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-300">Ready</span>
+            </div>
+
+            <div id="normalized-view-cards" class="hidden space-y-4">
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <p class="text-[10px] font-bold text-slate-500 uppercase">Identity (SOAP/XML)</p>
+                  <p id="card-name" class="text-xs font-bold text-slate-900 mt-0.5">-</p>
+                  <span class="text-[10px] text-emerald-600 font-bold">Auto-Parsed ✓</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <p class="text-[10px] font-bold text-slate-500 uppercase">Revenue (SQL Table)</p>
+                  <p id="card-income" class="text-xs font-bold text-indigo-600 mt-0.5 font-mono">-</p>
+                  <span id="card-revenue-badge" class="text-[10px] text-emerald-600 font-bold">Verified ✓</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <p class="text-[10px] font-bold text-slate-500 uppercase">Target Agency</p>
+                  <p class="text-xs font-bold text-slate-800 mt-0.5">Dept. Social Welfare</p>
+                  <span class="text-[10px] text-amber-600 font-bold">In-Queue</span>
+                </div>
+              </div>
+
+              <div id="card-fallback-alert" class="hidden p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900">
+                <strong>Circuit Breaker Activated:</strong> Dept of Revenue registry timed out. Placed in Asynchronous Retry Queue with extended SLA buffer.
+              </div>
+            </div>
+
+            <div id="pipeline-placeholder" class="py-12 text-center text-xs text-slate-400">
+              Submit an application on the left to trigger instant federated data exchange.
+            </div>
+          </div>
+        </div>
+
+        <!-- CITIZEN WORKFLOW TRACKER + DPDP CONSENT REVOCATION -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <div>
+              <h3 class="font-extrabold text-base text-slate-900">My Applications & Multi-Department Workflow Tracker</h3>
+              <p class="text-xs text-slate-500">Live progression across Stage 1 (Revenue) and Stage 2 (Welfare DBT) with DPDP token revocation</p>
+            </div>
+            <button onclick="loadCitizenTracker()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-lg transition font-bold">
+              ↻ Refresh Tracking
+            </button>
+          </div>
+
+          <div id="citizen-applications-container" class="space-y-4"></div>
+        </div>
+      </div>
+
+      <!-- 3. OFFICER DASHBOARD -->
+      <div id="section-officer" class="hidden space-y-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex justify-between items-center">
+          <div>
+            <span id="officer-desk-badge" class="text-xs font-mono font-bold text-indigo-600 tracking-wider uppercase">Department Desk</span>
+            <h2 id="officer-desk-title" class="text-xl font-extrabold text-slate-900 mt-1">Cross-Department Processing Queue</h2>
+            <p id="officer-desk-desc" class="text-xs text-slate-500 mt-1">Review specific departmental clearances in the federated lifecycle.</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openAuditModal()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-1.5 rounded-lg transition font-bold shadow-sm">
+              🔍 View Audit Logs
+            </button>
+            <button onclick="loadOfficerQueue()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-lg transition font-bold">
+              ↻ Refresh Queue
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 uppercase text-slate-500 border-b border-slate-200 font-mono text-[10px]">
+                <tr>
+                  <th class="p-3.5">App ID</th>
+                  <th class="p-3.5">Citizen Profile</th>
+                  <th class="p-3.5">Target Scheme</th>
+                  <th class="p-3.5">Dept. Revenue Stage</th>
+                  <th class="p-3.5">Dept. Welfare Stage</th>
+                  <th class="p-3.5">Overall Status</th>
+                  <th class="p-3.5">Department Action</th>
+                </tr>
+              </thead>
+              <tbody id="officer-table-body" class="divide-y divide-slate-100 text-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- AUDIT LOG MODAL -->
+  <div id="modal-audit" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="p-5 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+        <div>
+          <h3 class="font-bold text-base text-slate-900">Immutable Audit Trail (SQLite Ledger)</h3>
+          <p class="text-xs text-slate-500">Real-time trace IDs, DPDP consent events, and department clearances</p>
+        </div>
+        <button onclick="closeAuditModal()" class="text-slate-400 hover:text-slate-700 font-bold text-xl px-2">&times;</button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-3" id="audit-log-list"></div>
+      <div class="p-4 border-t border-slate-100 bg-slate-50 text-right">
+        <button onclick="closeAuditModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-1.5 rounded-lg text-xs font-bold">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentRole = "citizen";
+    let activeUser = null;
+    let isRevenueOffline = false;
+
+    function switchView(view) {
+      if (view === 'mesh') {
+        document.getElementById('view-mesh-section').classList.remove('hidden');
+        document.getElementById('view-app-section').classList.add('hidden');
+        document.getElementById('btn-view-mesh').className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200";
+        document.getElementById('btn-view-app').className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100";
+        loadRetryQueue();
+      } else {
+        document.getElementById('view-mesh-section').classList.add('hidden');
+        document.getElementById('view-app-section').classList.remove('hidden');
+        document.getElementById('btn-view-app').className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200";
+        document.getElementById('btn-view-mesh').className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100";
+      }
+    }
+
+    async function toggleRevenueOutage() {
+      isRevenueOffline = !isRevenueOffline;
+      const res = await fetch('/api/v1/system/toggle-outage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_down: isRevenueOffline })
+      });
+      const data = await res.json();
+      const btn = document.getElementById('btn-outage-toggle');
+      if (data.revenue_silo_outage_simulated) {
+        btn.textContent = "Offline Mode: ON (Tripped)";
+        btn.className = "bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition animate-pulse";
+      } else {
+        btn.textContent = "Offline Mode: OFF";
+        btn.className = "bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition";
+      }
+    }
+
+    async function loadRetryQueue() {
+      const res = await fetch('/api/v1/system/retry-queue');
+      const data = await res.json();
+      const container = document.getElementById('mesh-retry-queue-table');
+      if (data.length === 0) {
+        container.innerHTML = '<span class="text-emerald-400">All legacy silo gateways healthy. Zero pending retries.</span>';
+        return;
+      }
+      let html = '<div class="space-y-1.5">';
+      data.forEach(q => {
+        html += `<div class="p-2 bg-slate-950 border border-amber-900/60 rounded flex justify-between">
+          <span><strong class="text-amber-400">[QUEUED]</strong> App: ${q.application_id} &rarr; Target: ${q.target_department}</span>
+          <span class="text-rose-400">Error: ${q.last_error}</span>
+        </div>`;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function setLoginRole(role, defaultEmail) {
+      currentRole = role;
+      document.getElementById('login-username').value = defaultEmail;
+      document.getElementById('login-password').value = (role === 'citizen') ? 'password123' : 'admin';
+
+      ['citizen', 'revenue', 'welfare'].forEach(k => {
+        const btn = document.getElementById('btn-role-' + k);
+        if (defaultEmail.includes(k)) {
+          btn.className = "py-1.5 text-[11px] font-bold rounded-lg bg-indigo-600 text-white shadow-sm";
+        } else {
+          btn.className = "py-1.5 text-[11px] font-semibold rounded-lg text-slate-600 hover:text-slate-900";
+        }
+      });
+    }
+
+    async function handleLogin() {
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, role: currentRole })
+        });
+        
+        if (!res.ok) throw new Error("Invalid credentials");
+        const data = await res.json();
+        activeUser = data;
+
+        document.getElementById('section-login').classList.add('hidden');
+        document.getElementById('nav-user-info').classList.remove('hidden');
+        document.getElementById('user-display-name').textContent = data.name;
+        document.getElementById('user-display-dept').textContent = data.dept;
+
+        if (data.role === 'citizen') {
+          document.getElementById('section-citizen').classList.remove('hidden');
+          document.getElementById('section-officer').classList.add('hidden');
+          loadCitizenTracker();
+        } else {
+          document.getElementById('section-officer').classList.remove('hidden');
+          document.getElementById('section-citizen').classList.add('hidden');
+          document.getElementById('officer-desk-badge').textContent = data.dept;
+          document.getElementById('officer-desk-title').textContent = data.dept + " Processing Queue";
+          loadOfficerQueue();
+        }
+      } catch (err) {
+        alert("Authentication failed: Check role & credentials.");
+      }
+    }
+
+    function logout() {
+      activeUser = null;
+      document.getElementById('section-login').classList.remove('hidden');
+      document.getElementById('section-citizen').classList.add('hidden');
+      document.getElementById('section-officer').classList.add('hidden');
+      document.getElementById('nav-user-info').classList.add('hidden');
+    }
+
+    async function applyCitizenService() {
+      const btn = document.getElementById('btn-citizen-apply');
+      btn.disabled = true;
+      btn.textContent = "Orchestrating Submission...";
+
+      const scheme = document.getElementById('app-scheme').value;
+      const category = document.getElementById('app-category').value;
+      const bank = document.getElementById('app-bank').value;
+
+      try {
+        const consentRes = await fetch('/api/v1/consent/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            citizen_id: activeUser.citizen_id,
+            purpose: "Multi-Department DBT Verification",
+            scopes: ["identity:read", "revenue:read"],
+            expiry_timestamp: "2026-12-31T23:59:59Z"
+          })
+        });
+        const { consent_token } = await consentRes.json();
+
+        const appRes = await fetch('/api/v1/services/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            citizen_id: activeUser.citizen_id,
+            service_id: scheme,
+            scheme_category: category,
+            bank_account: bank,
+            consent_token: consent_token
+          })
+        });
+
+        if (appRes.status === 409) {
+          const errData = await appRes.json();
+          alert("Duplicate Prevented: " + errData.detail);
+          return;
+        }
+
+        const result = await appRes.json();
+
+        document.getElementById('pipeline-placeholder').classList.add('hidden');
+        document.getElementById('normalized-view-cards').classList.remove('hidden');
+        
+        if (result.fallback_engaged) {
+          document.getElementById('pipeline-status-badge').className = "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-bold";
+          document.getElementById('pipeline-status-badge').textContent = "Async Fallback (" + result.application_id + ")";
+          document.getElementById('card-revenue-badge').textContent = "Offline (Queued) ⏳";
+          document.getElementById('card-revenue-badge').className = "text-[10px] text-amber-600 font-bold";
+          document.getElementById('card-fallback-alert').classList.remove('hidden');
+        } else {
+          document.getElementById('pipeline-status-badge').className = "text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold";
+          document.getElementById('pipeline-status-badge').textContent = "Routed (" + result.application_id + ")";
+          document.getElementById('card-revenue-badge').textContent = "Verified ✓";
+          document.getElementById('card-revenue-badge').className = "text-[10px] text-emerald-600 font-bold";
+          document.getElementById('card-fallback-alert').classList.add('hidden');
+        }
+
+        document.getElementById('card-name').textContent = result.unified_profile.full_name;
+        document.getElementById('card-income').textContent = typeof result.unified_profile.annual_income === 'number' ? "₹" + result.unified_profile.annual_income.toLocaleString() : result.unified_profile.annual_income;
+
+        loadCitizenTracker();
+      } catch (err) {
+        alert("Submission failed. Check network or server logs.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Authorize Consent & Submit";
+      }
+    }
+
+    async function revokeCitizenConsent(appId) {
+      if (!confirm("Are you sure you want to invoke your DPDP right to revoke data consent? This will immediately terminate processing.")) return;
+      const res = await fetch(`/api/v1/consent/revoke/${appId}`, { method: 'POST' });
+      const data = await res.json();
+      alert(data.message);
+      loadCitizenTracker();
+    }
+
+    async function loadCitizenTracker() {
+      if (!activeUser || !activeUser.citizen_id) return;
+      const res = await fetch(`/api/v1/citizen/applications/${activeUser.citizen_id}`);
+      const data = await res.json();
+      const container = document.getElementById('citizen-applications-container');
+      container.innerHTML = '';
+
+      if (data.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-6 text-center">No active applications found.</p>';
+        return;
+      }
+
+      data.forEach(app => {
+        const revDone = app.revenue_status === 'APPROVED';
+        const welDone = app.welfare_status === 'APPROVED';
+        const isTerminated = app.consent_status === 'REVOKED' || app.status === 'CONSENT_TERMINATED';
+
+        const card = document.createElement('div');
+        card.className = "p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3";
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="font-mono text-xs font-bold text-indigo-600">${app.application_id}</span>
+              <h4 class="font-bold text-sm text-slate-900">${app.service_name}</h4>
+              <p class="text-[11px] text-slate-500 font-mono">DBT Target: ${app.bank_account}</p>
+            </div>
+            <div class="text-right">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                app.status === 'DISBURSED' || app.status === 'FULLY_APPROVED' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                isTerminated ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-amber-100 text-amber-800 border-amber-300'
+              }">${app.status}</span>
+              <p class="text-[10px] text-slate-400 mt-1 font-mono">${new Date(app.submitted_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+
+          <!-- Multi-Department Workflow Stepper -->
+          <div class="pt-2 border-t border-slate-200">
+            <div class="grid grid-cols-3 gap-2 text-center text-xs">
+              <div class="p-2.5 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-800">
+                <div class="font-bold text-[11px]">✓ Stage 1: Auto-Fetch</div>
+                <p class="text-[10px] text-emerald-700">SOAP Identity Verified</p>
+              </div>
+
+              <div class="p-2.5 rounded-xl border ${
+                revDone ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
+                app.revenue_status === 'ASYNC_RETRY_BUFFER' ? 'bg-amber-50 border-amber-200 text-amber-800' :
+                'bg-amber-50 border-amber-200 text-amber-800'
+              }">
+                <div class="font-bold text-[11px]">${revDone ? '✓' : '⏳'} Stage 2: Revenue Desk</div>
+                <p class="text-[10px]">${revDone ? 'Income Cleared' : (app.revenue_status === 'ASYNC_RETRY_BUFFER' ? 'Async Retry Queue' : 'Pending Review')}</p>
+              </div>
+
+              <div class="p-2.5 rounded-xl border ${
+                welDone ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
+                revDone ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-slate-100 border-slate-200 text-slate-400'
+              }">
+                <div class="font-bold text-[11px]">${welDone ? '✓' : (revDone ? '⏳' : '🔒')} Stage 3: Welfare DBT</div>
+                <p class="text-[10px]">${welDone ? 'DBT Disbursed' : (revDone ? 'Under Welfare Review' : 'Awaiting Revenue')}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- DPDP Revocation Button -->
+          <div class="pt-2 border-t border-slate-200 flex justify-between items-center text-xs">
+            <span class="text-[11px] text-slate-500">Token Status: <strong>${app.consent_status || 'ACTIVE'}</strong></span>
+            ${!isTerminated && app.status !== 'DISBURSED' ? `
+              <button onclick="revokeCitizenConsent('${app.application_id}')" class="text-rose-600 hover:text-rose-800 font-bold text-[11px] hover:underline">
+                Revoke Consent (DPDP Act) &rarr;
+              </button>
+            ` : '<span class="text-slate-400 text-[11px]">Lifecycle Closed</span>'}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function loadOfficerQueue() {
+      const res = await fetch('/api/v1/officer/applications');
+      const data = await res.json();
+      const tbody = document.getElementById('officer-table-body');
+      tbody.innerHTML = '';
+
+      const isRevenueDesk = activeUser && activeUser.dept ? activeUser.dept.toLowerCase().includes('revenue') : false;
+
+      data.forEach(app => {
+        const revStatus = app.revenue_status || 'PENDING_CLEARANCE';
+        const welStatus = app.welfare_status || 'AWAITING_REVENUE';
+        const overallStatus = app.status || 'STAGE_1_REVENUE_REVIEW';
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="p-3.5 font-mono font-bold text-indigo-700">${app.application_id}</td>
+          <td class="p-3.5">
+            <span class="font-bold text-slate-900">${app.citizen_name}</span><br>
+            <span class="text-[10px] text-slate-500 font-mono">${app.citizen_id}</span>
+          </td>
+          <td class="p-3.5 text-slate-700 font-medium">${app.service_name}</td>
+          <td class="p-3.5">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+              revStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+            }">${revStatus}</span>
+          </td>
+          <td class="p-3.5">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+              welStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'
+            }">${welStatus}</span>
+          </td>
+          <td class="p-3.5">
+            <span class="font-mono text-[10px] font-bold text-indigo-700">${overallStatus}</span>
+          </td>
+          <td class="p-3.5">
+            ${
+              app.status === 'CONSENT_TERMINATED' ? '<span class="text-rose-600 font-bold text-[11px]">Consent Revoked</span>' :
+              isRevenueDesk ? (
+                revStatus !== 'APPROVED' ? `
+                  <button onclick="departmentDecision('${app.application_id}', 'revenue', 'APPROVED')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded text-[11px] font-bold transition">Clear Tax & Route &rarr;</button>
+                ` : '<span class="text-emerald-700 font-semibold text-[11px]">Revenue Cleared ✓</span>'
+              ) : (
+                welStatus === 'UNDER_REVIEW' || welStatus === 'UNDER_WELFARE_REVIEW' ? `
+                  <button onclick="departmentDecision('${app.application_id}', 'welfare', 'APPROVED')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-[11px] font-bold transition">Grant Welfare DBT ✓</button>
+                ` : (welStatus === 'APPROVED' ? '<span class="text-emerald-700 font-semibold text-[11px]">Disbursed ✓</span>' : '<span class="text-slate-400 text-[11px]">Waiting Revenue</span>')
+              )
+            }
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function departmentDecision(appId, dept, status) {
+      await fetch(`/api/v1/officer/applications/${appId}/department/${dept}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: status })
+      });
+      loadOfficerQueue();
+    }
+
+    async function openAuditModal() {
+      document.getElementById('modal-audit').classList.remove('hidden');
+      const list = document.getElementById('audit-log-list');
+      list.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">Loading audit logs...</p>';
+
+      try {
+        const res = await fetch('/api/v1/audit/logs');
+        const data = await res.json();
+        list.innerHTML = '';
+
+        data.logs.forEach(log => {
+          const div = document.createElement('div');
+          div.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs";
+          div.innerHTML = `
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-bold text-indigo-600">${log.trace_id}</span>
+                <span class="font-bold text-slate-800">${log.action}</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">Departments: <span class="font-mono text-slate-700">${Array.isArray(log.departments_involved) ? log.departments_involved.join(', ') : log.departments_involved}</span></p>
+            </div>
+            <div class="text-right">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${log.status === 'TERMINATED' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">${log.status}</span>
+              <p class="text-[10px] text-slate-400 font-mono mt-1">${new Date(log.timestamp).toLocaleTimeString()}</p>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      } catch (err) {
+        list.innerHTML = '<p class="text-xs text-rose-500 text-center py-4">Failed to load audit logs.</p>';
+      }
+    }
+
+    function closeAuditModal() {
+      document.getElementById('modal-audit').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
